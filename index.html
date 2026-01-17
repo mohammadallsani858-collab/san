@@ -5,121 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আল্লাহ মহান</title>
     <style>
-        /* আপনার দেওয়া ছবির কালার থিম */
-        body { font-family: 'Arial', sans-serif; background: #E8E2D6; margin: 0; padding: 0; overflow-x: hidden; }
+        /* আপনার দেওয়া ইন্টারফেস থিম */
+        body { font-family: 'Arial', sans-serif; background: #E8E2D6; margin: 0; padding: 0; }
         
-        /* ✨ ইন্ট্রো স্ক্রিন স্টাইল */
-        #intro-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #E8E2D6; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 1s ease-out;
-        }
-        .intro-text { font-size: 50px; font-weight: bold; color: #333; opacity: 0; transform: translateY(20px); animation: fadeInUp 1.5s forwards; }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-
-        /* মেইন অ্যাপ স্টাইল */
-        .nav-top { background: #D9D2C3; padding: 12px; display: flex; justify-content: space-around; border-bottom: 1px solid #C4BBAA; position: sticky; top: 0; z-index: 1000; }
+        /* উপরের মেনু অপশন */
+        .nav-top { background: #D9D2C3; padding: 15px; display: flex; justify-content: space-around; border-bottom: 1px solid #C4BBAA; position: sticky; top: 0; z-index: 1000; }
         .nav-item { text-align: center; font-size: 14px; color: #444; cursor: pointer; font-weight: bold; }
-        .header { text-align: center; padding: 25px; background: #E8E2D6; border-bottom: 1px solid #C4BBAA; }
-        .surah-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid #D1C9B9; cursor: pointer; transition: 0.2s; }
-        .surah-item:hover { background: #DFD7C7; }
-        .surah-name { font-size: 24px; font-weight: bold; color: #222; }
+        .nav-item:hover { color: #000; }
+
+        .header { text-align: center; padding: 20px; background: #E8E2D6; }
         
-        /* আয়াত পড়ার স্ক্রিন */
+        /* সূরার লিস্ট স্টাইল */
+        .surah-list { padding: 10px; max-width: 800px; margin: auto; }
+        .surah-item { display: flex; align-items: center; padding: 18px; border-bottom: 1px solid #D1C9B9; cursor: pointer; transition: 0.2s; }
+        .surah-item:hover { background: #DFD7C7; }
+        
+        .surah-no { font-size: 18px; color: #777; width: 45px; font-weight: bold; }
+        .surah-info { flex-grow: 1; }
+        /* বাংলা ও আরবী নাম একসাথে */
+        .surah-name-bn { font-size: 22px; font-weight: bold; color: #222; }
+        .surah-name-ar { font-size: 20px; color: #555; font-family: 'Amiri', serif; margin-left: 10px; }
+        .surah-meta { font-size: 13px; color: #888; margin-top: 4px; }
+
+        /* রিডিং স্ক্রিন */
         .content-screen { display: none; padding: 20px; background: #F8F5F0; min-height: 100vh; }
-        .arabic { font-size: 35px; text-align: right; line-height: 2.5; color: #2C3E50; margin-bottom: 25px; border-bottom: 1px solid #E0DACE; padding-bottom: 20px; }
-        .bangla { font-size: 22px; text-align: left; color: #444; margin-bottom: 45px; line-height: 1.8; }
-        .back-btn { background: #444; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 18px; }
+        .arabic-text { font-size: 35px; text-align: right; line-height: 2.5; color: #2C3E50; margin-bottom: 20px; font-family: serif; }
+        .bangla-text { font-size: 22px; color: #444; margin-bottom: 40px; line-height: 1.8; }
+        .back-btn { background: #444; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 20px; }
     </style>
 </head>
-<body onload="startApp()">
+<body>
 
-<div id="intro-screen">
-    <div class="intro-text">✨ আল্লাহ মহান ✨</div>
-    <p style="color: #666; margin-top: 20px;">পবিত্র কুরআন ডিজিটাল ভাণ্ডার</p>
+<div class="nav-top">
+    <div class="nav-item" onclick="alert('লাস্ট রিড ফিচারটি শীঘ্রই আসছে!')">📖<br>লাস্ট রিড</div>
+    <div class="nav-item" onclick="alert('সার্চ ফিচারটি শীঘ্রই আসছে!')">🔍<br>সার্চ</div>
+    <div class="nav-item" onclick="alert('অডিও ফিচারটি শীঘ্রই আসছে!')">🎵<br>অডিও</div>
+    <div class="nav-item" onclick="alert('সেটিংস ফিচারটি শীঘ্রই আসছে!')">⚙️<br>সেটিংস</div>
 </div>
 
-<div id="main-app" style="display: none; opacity: 0; transition: opacity 1s;">
-    <div class="nav-top">
-        <div class="nav-item">📖<br>লাস্ট রিড</div>
-        <div class="nav-item">🔍<br>সার্চ</div>
-        <div class="nav-item">🎵<br>অডিও</div>
-        <div class="nav-item">⚙️<br>সেটিংস</div>
-    </div>
+<div class="header" id="main-header">
+    <h1 style="margin:0; font-size: 32px;">✨ আল্লাহ মহান ✨</h1>
+</div>
 
-    <div class="header">
-        <h1 style="margin:0; font-size: 35px;">✨ আল্লাহ মহান ✨</h1>
-    </div>
+<div class="surah-list" id="list-screen">
+    <div id="surah-container"></div>
+</div>
 
-    <div class="surah-list" id="list-screen">
-        <div id="surah-container" style="max-width: 800px; margin: auto;"></div>
-    </div>
-
-    <div class="content-screen" id="reading-screen">
-        <button class="back-btn" onclick="showList()">⬅ তালিকায় ফিরে যান</button>
-        <div id="quran-content" style="max-width: 700px; margin: auto;"></div>
-    </div>
+<div class="content-screen" id="reading-screen">
+    <button class="back-btn" onclick="showList()">⬅ তালিকায় ফিরে যান</button>
+    <div id="quran-content"></div>
 </div>
 
 <script>
-    // ইন্ট্রো কন্ট্রোল লজিক
-    function startApp() {
-        loadSurahList(); // ব্যাকগ্রাউন্ডে ডাটা লোড হবে
-        setTimeout(() => {
-            const intro = document.getElementById('intro-screen');
-            const app = document.getElementById('main-app');
-            intro.style.opacity = '0';
-            setTimeout(() => {
-                intro.style.display = 'none';
-                app.style.display = 'block';
-                setTimeout(() => { app.style.opacity = '1'; }, 50);
-            }, 1000);
-        }, 2500); // ২.৫ সেকেন্ড ইন্ট্রো দেখাবে
-    }
+    // সূরার বাংলা নামগুলো (সহজ করার জন্য প্রধান কয়েকটির লিস্ট)
+    const bnNames = {
+        1: "আল-ফাতিহা", 2: "আল-বাকারা", 3: "আল-ইমরান", 4: "আন-নিসা", 5: "আল-মায়িদাহ",
+        6: "আল-আন'আম", 7: "আল-আ'রাফ", 8: "আল-আনফাল", 9: "আত-তাওবাহ", 10: "ইউনুস",
+        // এভাবে ১১৪ পর্যন্ত সেট হবে
+    };
 
-    async function loadSurahList() {
+    async function loadList() {
         const res = await fetch('https://api.alquran.cloud/v1/surah');
         const data = await res.json();
         const container = document.getElementById('surah-container');
+        
         data.data.forEach(s => {
+            const banglaName = bnNames[s.number] || s.englishName; // বাংলা না থাকলে ইংরেজি দেখাবে
             container.innerHTML += `
-                <div class="surah-item" onclick="readSurah(${s.number})">
-                    <div style="width: 50px; font-weight: bold; color: #666;">${s.number}</div>
-                    <div class="surah-info" style="flex-grow: 1;">
-                        <div class="surah-name">সূরা ${s.name}</div>
-                        <div style="font-size: 14px; color: #777;">আয়াত: ${s.numberOfAyahs}</div>
+                <div class="surah-item" onclick="readSurah(${s.number}, '${banglaName}')">
+                    <div class="surah-no">${s.number}</div>
+                    <div class="surah-info">
+                        <span class="surah-name-bn">${banglaName}</span>
+                        <span class="surah-name-ar">(${s.name})</span>
+                        <div class="surah-meta">আয়াত: ${s.numberOfAyahs} | ${s.revelationType === 'Meccan' ? 'মাক্কী' : 'মাদানী'}</div>
                     </div>
-                    <div style="font-size: 20px; color: #555;">♡</div>
+                    <div style="color:#777;">♡</div>
                 </div>`;
         });
     }
 
-    async function readSurah(id) {
+    async function readSurah(id, name) {
         document.getElementById('list-screen').style.display = 'none';
-        document.querySelector('.header').style.display = 'none';
-        document.querySelector('.nav-top').style.display = 'none';
+        document.getElementById('main-header').style.display = 'none';
         document.getElementById('reading-screen').style.display = 'block';
         const content = document.getElementById('quran-content');
-        content.innerHTML = "<h3>লোড হচ্ছে...</h3>";
+        content.innerHTML = "লোড হচ্ছে...";
+        
         const [resAr, resBn] = await Promise.all([
             fetch(`https://api.alquran.cloud/v1/surah/${id}`),
             fetch(`https://api.alquran.cloud/v1/surah/${id}/bn.bengali`)
         ]);
         const [dAr, dBn] = await Promise.all([resAr.json(), resBn.json()]);
-        content.innerHTML = `<h2 style="text-align:center;">সূরা ${dAr.data.englishName}</h2><hr style="border:0.5px solid #D1C9B9;">`;
+        
+        content.innerHTML = `<h2 style="text-align:center;">সূরা ${name}</h2><hr style="border:0.5px solid #D1C9B9;">`;
         dAr.data.ayahs.forEach((ayah, i) => {
-            content.innerHTML += `<div class="arabic">${ayah.text}</div><div class="bangla">${dBn.data.ayahs[i].text}</div>`;
+            content.innerHTML += `
+                <div class="arabic-text">${ayah.text}</div>
+                <div class="bangla-text">${dBn.data.ayahs[i].text}</div>`;
         });
         window.scrollTo(0, 0);
     }
 
     function showList() {
         document.getElementById('list-screen').style.display = 'block';
-        document.querySelector('.header').style.display = 'block';
-        document.querySelector('.nav-top').style.display = 'flex';
+        document.getElementById('main-header').style.display = 'block';
         document.getElementById('reading-screen').style.display = 'none';
     }
+
+    loadList();
 </script>
 
 </body>
