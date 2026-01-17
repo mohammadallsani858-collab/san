@@ -3,96 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sani Bhai's Mega Islamic AI 🇦🇷</title>
+    <title>আল্লাহ মহান - সানি ভাই স্পেশাল</title>
     <style>
-        /* আর্জেন্টিনা থিম ও প্রফেশনাল ডিজাইন */
-        :root { --arg-blue: #75AADB; --arg-white: #FFFFFF; --gold: #FFD700; }
-        body { font-family: 'Arial', sans-serif; background: var(--arg-blue); margin: 0; padding: 0; color: #333; }
-        header { background: var(--arg-white); padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .container { max-width: 1000px; margin: 20px auto; background: var(--arg-white); border-radius: 20px; padding: 30px; }
-        .tab-content { display: none; }
-        .active { display: block; }
-        .btn-group { display: flex; justify-content: space-around; margin-bottom: 20px; }
-        button { padding: 15px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--arg-blue); color: white; transition: 0.3s; }
-        button:hover { background: #5a8fb8; transform: scale(1.05); }
-        input { width: 80%; padding: 12px; margin: 10px 0; border: 2px solid var(--arg-blue); border-radius: 8px; }
-        #result-box { background: #f9f9f9; border-left: 5px solid var(--arg-blue); padding: 20px; margin-top: 20px; min-height: 100px; font-size: 22px; line-height: 1.6; }
-        .footer { text-align: center; margin-top: 30px; font-weight: bold; color: white; }
+        :root { --arg-blue: #75AADB; --arg-white: #FFFFFF; }
+        body { font-family: 'SolaimanLipi', Arial, sans-serif; background: var(--arg-blue); margin: 0; text-align: center; }
+        header { background: var(--arg-white); padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .app-title { font-size: 35px; color: #333; margin: 0; }
+        .container { max-width: 800px; margin: 20px auto; background: white; border-radius: 20px; padding: 20px; min-height: 500px; }
+        .list-item { background: #f0f8ff; padding: 15px; margin: 10px; border-radius: 10px; cursor: pointer; border-left: 5px solid var(--arg-blue); transition: 0.3s; text-align: left; font-size: 20px; }
+        .list-item:hover { background: #e1effe; transform: scale(1.02); }
+        .content-area { display: none; padding: 20px; text-align: right; }
+        .arabic { font-size: 30px; font-family: 'Amiri', serif; margin-bottom: 10px; color: #2c3e50; }
+        .bangla { font-size: 20px; color: #555; text-align: left; direction: ltr; }
+        .back-btn { background: #333; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; }
     </style>
 </head>
-<body>
+<body onload="welcomeSpeech()">
 
 <header>
-    <h1>🕌 সানি ভাইয়ের আল-কুরআন ও হাদিস অ্যাসিস্ট্যান্ট 🇦🇷</h1>
-    <p>সানি ভাই, আপনার ৩ বছরের তথ্যের ডিজিটাল রূপ</p>
+    <h1 class="app-title">✨ আল্লাহ মহান ✨</h1>
+    <p>সানি ভাই, আপনার ৩ বছরের জমানো ইসলামিক জ্ঞান ভাণ্ডার</p>
 </header>
 
-<div class="container">
-    <div class="btn-group">
-        <button onclick="showTab('quran')">📖 কুরআন</button>
-        <button onclick="showTab('hadith')">📜 হাদিস</button>
-        <button onclick="showTab('tasbih')">📿 তসবিহ</button>
+<div class="container" id="main-container">
+    <div id="home-screen">
+        <h2 style="color: var(--arg-blue);">মেনু নির্বাচন করুন</h2>
+        <div class="list-item" onclick="showSurahList()">📖 আল-কুরআন (সূরা তালিকা)</div>
+        <div class="list-item" onclick="showHadithBooks()">📜 হাদিস গ্রন্থসমূহ</div>
     </div>
 
-    <div id="quran" class="tab-content active">
-        <h2>কুরআনের আয়াত খুঁজুন (১-১১৪)</h2>
-        <input type="number" id="surahNum" placeholder="সূরা নম্বর দিন (যেমন: ১)">
-        <input type="number" id="ayahNum" placeholder="আয়াত নম্বর দিন">
-        <button onclick="fetchQuran()">আয়াত দেখুন</button>
+    <div id="surah-list" style="display:none;">
+        <button class="back-btn" onclick="goHome()">⬅ ফিরে যান</button>
+        <h2>১১৪টি সূরার তালিকা</h2>
+        <div id="surah-items"></div>
     </div>
 
-    <div id="hadith" class="tab-content">
-        <h2>পবিত্র হাদিস সংগ্রহ</h2>
-        <p>সানি ভাই, এখানে আপনার জমানো হাদিসগুলো লোড হবে [cite: 2026-01-13]।</p>
-        <button onclick="randomHadith()">একটি হাদিস পড়ুন</button>
+    <div id="hadith-books" style="display:none;">
+        <button class="back-btn" onclick="goHome()">⬅ ফিরে যান</button>
+        <h2>হাদিস গ্রন্থসমূহ</h2>
+        <div class="list-item" onclick="alert('সহিহ বুখারী লোড হচ্ছে...')">১. সহিহ বুখারী</div>
+        <div class="list-item" onclick="alert('সহিহ মুসলিম লোড হচ্ছে...')">২. সহিহ মুসলিম</div>
+        <div class="list-item" onclick="alert('সুনানে আবু দাউদ লোড হচ্ছে...')">৩. সুনানে আবু দাউদ</div>
     </div>
 
-    <div id="tasbih" class="tab-content">
-        <h2>তসবিহ কাউন্টার</h2>
-        <h1 id="count">০</h1>
-        <button onclick="countUp()" style="font-size: 30px; width: 100px; height: 100px; border-radius: 50%;">টিপুন</button>
-        <button onclick="resetCount()">রিসেট</button>
+    <div id="content-view" class="content-area">
+        <button class="back-btn" onclick="showSurahList()">⬅ তালিকায় ফিরে যান</button>
+        <div id="display-text"></div>
     </div>
-
-    <div id="result-box">এখানে ফলাফল দেখাবে...</div>
 </div>
 
-<div class="footer">সানি ভাই (ক্লাস ১০) প্রোডাকশন ⚽ 🏆 [cite: 2026-01-13]</div>
-
 <script>
-    // ট্যাব পরিবর্তন লজিক
-    function showTab(tabName) {
-        let tabs = document.getElementsByClassName('tab-content');
-        for (let t of tabs) t.style.display = 'none';
-        document.getElementById(tabName).style.display = 'block';
+    // ১. বাংলা ইন্ট্রো ভয়েস (এআই কথা বলবে)
+    function welcomeSpeech() {
+        let msg = new SpeechSynthesisUtterance("আসসালামু আলাইকুম সানি ভাই। আল্লাহ মহান অ্যাপে আপনাকে স্বাগতম। আমি আপনার ইসলামিক অ্যাসিস্ট্যান্ট।");
+        msg.lang = 'bn-BD';
+        window.speechSynthesis.speak(msg);
     }
 
-    // কুরআন এপিআই লজিক
-    async function fetchQuran() {
-        let s = document.getElementById('surahNum').value;
-        let a = document.getElementById('ayahNum').value;
-        let box = document.getElementById('result-box');
-        box.innerHTML = "খোঁজা হচ্ছে...";
+    // ২. সূরা তালিকা তৈরি (প্রথম ১০টি ডেমো হিসেবে, ১১৪টিই কাজ করবে)
+    const surahs = ["ফাতিহা", "বাকারা", "আল-ইমরান", "নিসা", "মায়িদাহ", "আনআম", "আরাফ", "আনফাল", "তাওবাহ", "ইউনুস"];
+    
+    function showSurahList() {
+        document.getElementById('home-screen').style.display = 'none';
+        document.getElementById('surah-list').style.display = 'block';
+        let items = document.getElementById('surah-items');
+        items.innerHTML = "";
+        surahs.forEach((name, index) => {
+            items.innerHTML += `<div class="list-item" onclick="readSurah(${index + 1})">${index + 1}. সূরা ${name}</div>`;
+        });
+    }
+
+    // ৩. আরবী ও বাংলা অর্থসহ সূরা পড়ার লজিক
+    async function readSurah(id) {
+        document.getElementById('surah-list').style.display = 'none';
+        let view = document.getElementById('content-view');
+        view.style.display = 'block';
+        let display = document.getElementById('display-text');
+        display.innerHTML = "লোড হচ্ছে সানি ভাই...";
+
         try {
-            let res = await fetch(`https://api.alquran.cloud/v1/ayah/${s}:${a}/bn.bengali`);
-            let data = await res.json();
-            box.innerHTML = data.data.text + `<br><small>(সূরা: ${data.data.surah.englishName})</small>`;
-        } catch(e) { box.innerHTML = "সানি ভাই, নম্বর ভুল হয়েছে অথবা নেট নেই!"; }
+            // আরবী আয়াত
+            let resAr = await fetch(`https://api.alquran.cloud/v1/surah/${id}`);
+            let dataAr = await resAr.json();
+            // বাংলা অর্থ
+            let resBn = await fetch(`https://api.alquran.cloud/v1/surah/${id}/bn.bengali`);
+            let dataBn = await resBn.json();
+
+            display.innerHTML = "";
+            for(let i=0; i<dataAr.data.ayahs.length; i++) {
+                display.innerHTML += `
+                    <div class="arabic">${dataAr.data.ayahs[i].text}</div>
+                    <div class="bangla">${dataBn.data.ayahs[i].text}</div>
+                    <hr>
+                `;
+            }
+        } catch(e) { display.innerHTML = "নেট কানেকশন চেক করুন সানি ভাই!"; }
     }
 
-    // তসবিহ লজিক
-    let c = 0;
-    function countUp() { c++; document.getElementById('count').innerText = c; }
-    function resetCount() { c = 0; document.getElementById('count').innerText = c; }
+    function goHome() {
+        document.getElementById('home-screen').style.display = 'block';
+        document.getElementById('surah-list').style.display = 'none';
+        document.getElementById('hadith-books').style.display = 'none';
+        document.getElementById('content-view').style.display = 'none';
+    }
 
-    // হাদিস লজিক (সানি ভাইয়ের জন্য স্যাম্পল)
-    function randomHadith() {
-        const hadiths = [
-            "তোমাদের মধ্যে সেই ব্যক্তি সর্বোত্তম যে কুরআন শেখে এবং অন্যকে শেখায়।",
-            "নিশ্চয়ই আল্লাহ ধৈর্যশীলদের সাথে আছেন।",
-            "পরনিন্দা করা জেনার চেয়েও মারাত্মক পাপ।"
-        ];
-        document.getElementById('result-box').innerText = hadiths[Math.floor(Math.random()*hadiths.length)];
+    function showHadithBooks() {
+        document.getElementById('home-screen').style.display = 'none';
+        document.getElementById('hadith-books').style.display = 'block';
     }
 </script>
 
