@@ -11,7 +11,6 @@
         .app-bar { background: #000; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; text-align: center; }
         .app-bar h2 { margin: 0; color: #FF9800; font-size: 30px; }
 
-        /* সার্চ বক্স স্টাইল */
         #search-box { width: 90%; margin: 10px auto; display: none; }
         #search-input { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #333; background: #111; color: #fff; font-size: 18px; outline: none; }
 
@@ -64,17 +63,29 @@
     const namesBn = ["", "ফাতিহা", "বাকারা", "ইমরান", "নিসা", "মায়িদাহ", "আন'আম", "আ'রাফ", "আনফাল", "তাওবাহ", "ইউনুস", "হুদ", "ইউসুফ", "রাদ", "ইব্রাহিম", "হিজর", "নাহল", "ইসরা", "কাহফ", "মারইয়াম", "ত্বোয়া-হা", "আম্বিয়া", "হাজ্জ", "মুমিনুন", "নূর", "ফুরকান", "শু'আরা", "নামল", "কাসাস", "আনকাবুত", "রূম", "লুকমান", "সাজদাহ", "আহজাব", "সাবা", "ফাতির", "ইয়াসীন", "সাফফাত", "সোয়াদ", "যুমার", "গাফির", "ফুসসিলাত", "শূরা", "যুখরুফ", "দুখান", "জাসিয়াহ", "আহক্বাফ", "মুহাম্মাদ", "ফাতহ", "হুজুরাত", "ক্বাফ", "যারিয়াত", "তূর", "নাজম", "ক্বামার", "রাহমান", "ওয়াক্বিয়াহ", "হাদীদ", "মুজাদালাহ", "হাশর", "মুমতাহিনাহ", "সাফ", "জুমু'আহ", "মুনাফিকুন", "তাগাবুন", "ত্বালাক্ব", "তাহরীম", "মুলক", "ক্বলম", "হাক্কাহ", "মা'আরিজ", "নূহ", "জীন", "মুযযামমিল", "মুদ্দাসসির", "ক্বিয়ামাহ", "ইনসান", "মুরসালাত", "নাবা", "নাযি'আত", "আবাসা", "তাকবীর", "ইনফিতার", "মুতাফফিফীন", "ইনশিক্বাক্ব", "বুরূজ", "তারিক্ব", "আ'লা", "গাশিয়াহ", "ফাজর", "বালাদ", "শামস", "লাইল", "দুহা", "ইনশিরাহ", "তীন", "আলাক্ব", "ক্বদর", "বাইয়্যিনাহ", "যিলযাল", "আদিয়াত", "ক্বারিয়াহ", "তাকাসুর", "আসর", "হুমাযাহ", "ফীল", "কুরাইশ", "মাউন", "কাউসার", "কাফিরুন", "নাসর", "লাহাব", "ইখলাস", "ফালাক্ব", "নাস"];
 
     function startApp() {
-        // ইন্ট্রো সরিয়ে সরাসরি লোড হবে [cite: 2026-01-13]
         checkLastRead();
         loadList();
     }
 
     async function loadList() {
-        const res = await fetch('https://api.alquran.cloud/v1/surah');
-        const data = await res.json();
+        // সূরার লিস্ট ক্যাশ থেকে চেক করা
+        const cachedList = localStorage.getItem('surah_list');
+        if(cachedList) {
+            displayList(JSON.parse(cachedList));
+        }
+
+        try {
+            const res = await fetch('https://api.alquran.cloud/v1/surah');
+            const data = await res.json();
+            localStorage.setItem('surah_list', JSON.stringify(data.data));
+            displayList(data.data);
+        } catch(e) { console.log("Offline mode: Using cached list"); }
+    }
+
+    function displayList(data) {
         const container = document.getElementById('surah-list');
         container.innerHTML = "";
-        data.data.forEach(s => {
+        data.forEach(s => {
             container.innerHTML += `
                 <div class="surah-item" onclick="readSurah(${s.number}, '${namesBn[s.number]}', ${s.numberOfAyahs})">
                     <div class="surah-no">${s.number}</div>
@@ -91,39 +102,54 @@
         document.getElementById('main-app').style.display = 'none';
         document.getElementById('reading-screen').style.display = 'block';
         document.getElementById('surah-title').innerText = "সূরা " + name;
+        
         const content = document.getElementById('ayah-container');
-        content.innerHTML = "<h2 style='text-align:center; padding-top: 50px;'>পবিত্র বাণী লোড হচ্ছে...</h2>";
-        const [rAr, rBn] = await Promise.all([
-            fetch(`https://api.alquran.cloud/v1/surah/${id}`),
-            fetch(`https://api.alquran.cloud/v1/surah/${id}/bn.bengali`)
-        ]);
-        const dAr = await rAr.json();
-        const dBn = await rBn.json();
-        content.innerHTML = "";
-        dAr.data.ayahs.forEach((ayah, i) => {
-            content.innerHTML += `
-                <div class="ayah-card">
-                    <div style="color: #FF9800; font-size: 18px; margin-bottom: 10px;">আয়াত: ${ayah.numberInSurah}</div>
-                    <div class="arabic">${ayah.text}</div>
-                    <div class="translation">${dBn.data.ayahs[i].text}</div>
-                </div>`;
-        });
+        
+        // অফলাইন চেক
+        const cachedAyahs = localStorage.getItem('surah_' + id);
+        if(cachedAyahs) {
+            content.innerHTML = cachedAyahs;
+            window.scrollTo(0,0);
+        } else {
+            content.innerHTML = "<h2 style='text-align:center; padding-top: 50px;'>পবিত্র বাণী লোড হচ্ছে... (প্রথমবার নেট লাগবে)</h2>";
+        }
+
+        try {
+            const [rAr, rBn] = await Promise.all([
+                fetch(`https://api.alquran.cloud/v1/surah/${id}`),
+                fetch(`https://api.alquran.cloud/v1/surah/${id}/bn.bengali`)
+            ]);
+            const dAr = await rAr.json();
+            const dBn = await rBn.json();
+            
+            let html = "";
+            dAr.data.ayahs.forEach((ayah, i) => {
+                html += `
+                    <div class="ayah-card">
+                        <div style="color: #FF9800; font-size: 18px; margin-bottom: 10px;">আয়াত: ${ayah.numberInSurah}</div>
+                        <div class="arabic">${ayah.text}</div>
+                        <div class="translation">${dBn.data.ayahs[i].text}</div>
+                    </div>`;
+            });
+            content.innerHTML = html;
+            localStorage.setItem('surah_' + id, html); // সেভ করে রাখা হলো
+        } catch(e) {
+            if(!cachedAyahs) content.innerHTML = "<h2 style='text-align:center;'>নেট নেই! এই সূরাটি আগে কখনো পড়া হয়নি।</h2>";
+        }
         window.scrollTo(0,0);
     }
 
+    // বাকি ফাংশনগুলো আগের মতোই...
     function toggleSearch() {
         const box = document.getElementById('search-box');
         box.style.display = box.style.display === 'block' ? 'none' : 'block';
-        if(box.style.display === 'block') document.getElementById('search-input').focus();
     }
-
     function doSearch() {
         const q = document.getElementById('search-input').value.toLowerCase();
         document.querySelectorAll('.surah-item').forEach(item => {
             item.style.display = item.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
         });
     }
-
     function checkLastRead() {
         const name = localStorage.getItem('last_name');
         if(name) {
@@ -131,11 +157,9 @@
             document.getElementById('last-info').innerText = `সূরা ${name} (আয়াত: ${localStorage.getItem('last_ayahs')})`;
         }
     }
-
     function openLastRead() {
         readSurah(localStorage.getItem('last_id'), localStorage.getItem('last_name'), localStorage.getItem('last_ayahs'));
     }
-
     function goBack() {
         document.getElementById('reading-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
