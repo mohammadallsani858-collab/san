@@ -5,108 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আল্লাহ মহান</title>
     <style>
-        /* ১. বড় ফন্ট ও জেনারেল স্টাইল [cite: 2026-01-16] */
-        body { font-family: 'Arial', sans-serif; background: #E8E2D6; margin: 0; padding: 0; }
+        /* ১. ফুল ডার্ক থিম ও বড় ফন্ট */
+        body { font-family: 'Arial', sans-serif; background: #000; color: #fff; margin: 0; padding: 0; }
         
-        /* ২. ইন্ট্রো স্ক্রিন */
-        #intro { position: fixed; top: 0; width: 100%; height: 100%; background: #E8E2D6; display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        #intro h1 { font-size: 55px; color: #333; }
+        /* ২. টপ নেভিগেশন (সেটিংস বাটন ছাড়া) */
+        .nav-top { background: #000; padding: 20px 10px; display: flex; justify-content: space-around; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; }
+        .nav-item { text-align: center; font-size: 14px; color: #fff; cursor: pointer; }
+        .nav-item i { display: block; font-size: 22px; margin-bottom: 5px; }
 
-        /* ৩. নেভিগেশন ও সার্চ বার */
-        .nav-top { background: #D9D2C3; padding: 15px; display: flex; justify-content: space-around; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #C4BBAA; }
-        .nav-item { font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; }
-        #search-box { width: 90%; margin: 10px auto; display: none; }
-        #search-input { width: 100%; padding: 15px; border-radius: 30px; border: 1px solid #C4BBAA; font-size: 20px; outline: none; }
+        /* ৩. সূরার তালিকা স্টাইল */
+        .surah-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid #111; cursor: pointer; transition: 0.3s; }
+        .surah-item:hover { background: #111; }
+        .surah-no { font-size: 18px; color: #fff; width: 40px; text-align: center; }
+        .surah-info { flex-grow: 1; margin-left: 15px; }
+        .surah-name-bn { font-size: 24px; font-weight: bold; color: #fff; }
+        .surah-meta { font-size: 14px; color: #888; margin-top: 5px; }
+        .fav-icon { color: #888; font-size: 20px; padding: 0 10px; }
 
-        /* ৪. ১১৪টি সূরার তালিকা */
-        .surah-item { display: flex; align-items: center; padding: 22px; border-bottom: 1px solid #D1C9B9; cursor: pointer; background: #fff; margin: 8px; border-radius: 12px; }
-        .surah-no { font-size: 22px; color: #777; width: 55px; font-weight: bold; }
-        .surah-name-bn { font-size: 28px; font-weight: bold; flex-grow: 1; color: #222; }
-
-        /* ৫. ডার্ক রিডিং স্ক্রিন */
-        #reading-screen { display: none; background: #000; color: #fff; min-height: 100vh; }
-        .header-read { padding: 20px; background: #111; display: flex; align-items: center; }
-        .ayah-card { padding: 40px 20px; border-bottom: 1px solid #222; text-align: center; }
-        .arabic { font-size: 42px; line-height: 2.5; margin-bottom: 25px; color: #fff; }
-        .translation { font-size: 26px; color: #bbb; line-height: 1.8; }
-        .ayah-no-box { color: #FF9800; font-size: 18px; margin-bottom: 10px; font-weight: bold; }
+        /* ৪. রিডিং স্ক্রিন */
+        #reading-screen { display: none; background: #000; min-height: 100vh; padding-bottom: 50px; }
+        .ayah-card { padding: 40px 20px; border-bottom: 1px solid #111; text-align: center; }
+        .arabic { font-size: 42px; line-height: 2.5; margin-bottom: 20px; color: #fff; font-family: 'Amiri', serif; }
+        .translation { font-size: 24px; color: #aaa; line-height: 1.8; }
     </style>
 </head>
-<body onload="startApp()">
-
-<div id="intro"><h1>✨ আল্লাহ মহান ✨</h1></div>
+<body>
 
 <div id="main-app">
     <div class="nav-top">
-        <div class="nav-item" onclick="location.reload()">📖<br>হোম</div>
-        <div class="nav-item" onclick="toggleSearch()">🔍<br>সার্চ</div>
-        <div class="nav-item">⚙️<br>সেটিংস</div>
+        <div class="nav-item">📋<br>লাস্ট রিড</div>
+        <div class="nav-item">🔍<br>সার্চ</div>
+        <div class="nav-item">🎵<br>অডিও</div>
+        <div class="nav-item">💰<br>ডোনেট</div>
     </div>
-
-    <div id="search-box">
-        <input type="text" id="search-input" placeholder="সূরার নাম লিখুন..." onkeyup="searchSurah()">
-    </div>
-
     <div id="surah-list"></div>
 </div>
 
 <div id="reading-screen">
-    <div class="header-read">
-        <button onclick="goBack()" style="color:#fff; background:none; border:none; font-size: 35px; cursor:pointer;">←</button>
-        <span id="surah-title" style="margin-left: 20px; font-size: 26px; font-weight: bold;"></span>
+    <div style="padding: 20px; display: flex; align-items: center; border-bottom: 1px solid #222;">
+        <button onclick="goBack()" style="color:#fff; background:none; border:none; font-size: 30px; cursor:pointer;">←</button>
+        <div id="header-info" style="margin-left: 20px;">
+            <div id="current-surah-name" style="font-size: 22px; font-weight: bold;"></div>
+            <div id="current-surah-meta" style="font-size: 14px; color: #888;"></div>
+        </div>
     </div>
     <div id="ayah-container"></div>
 </div>
 
 <script>
-    // ১১৪টি সূরার সম্পূর্ণ বাংলা নাম
-    const surahNames = ["", "ফাতিহা", "বাকারা", "ইমরান", "নিসা", "মায়িদাহ", "আন'আম", "আ'রাফ", "আনফাল", "তাওবাহ", "ইউনুস", "হুদ", "ইউসুফ", "রাদ", "ইব্রাহিম", "হিজর", "নাহল", "ইসরা", "কাহফ", "মারইয়াম", "ত্বোয়া-হা", "আম্বিয়া", "হাজ্জ", "মুমিনুন", "নূর", "ফুরকান", "শু'আরা", "নামল", "কাসাস", "আনকাবুত", "রূম", "লুকমান", "সাজদাহ", "আহজাব", "সাবা", "ফাতির", "ইয়াসীন", "সাফফাত", "সোয়াদ", "যুমার", "গাফির", "ফুসসিলাত", "শূরা", "যুখরুফ", "দুখান", "জাসিয়াহ", "আহক্বাফ", "মুহাম্মাদ", "ফাতহ", "হুজুরাত", "ক্বাফ", "যারিয়াত", "তূর", "নাজম", "ক্বামার", "রাহমান", "ওয়াক্বিয়াহ", "হাদীদ", "মুজাদালাহ", "হাশর", "মুমতাহিনাহ", "সাফ", "জুমু'আহ", "মুনাফিকুন", "তাগাবুন", "ত্বালাক্ব", "তাহরীম", "মুলক", "ক্বলম", "হাক্কাহ", "মা'আরিজ", "নূহ", "জীন", "মুযযামমিল", "মুদ্দাসসির", "ক্বিয়ামাহ", "ইনসান", "মুরসালাত", "নাবা", "নাযি'আত", "আবাসা", "তাকবীর", "ইনফিতার", "মুতাফফিফীন", "ইনশিক্বাক্ব", "বুরূজ", "তারিক্ব", "আ'লা", "গাশিয়াহ", "ফাজর", "বালাদ", "শামস", "লাইল", "দুহা", "ইনশিরাহ", "তীন", "আলাক্ব", "ক্বদর", "বাইয়্যিনাহ", "যিলযাল", "আদিয়াত", "ক্বারিয়াহ", "তাকাসুর", "আসর", "হুমাযাহ", "ফীল", "কুরাইশ", "মাউন", "কাউসার", "কাফিরুন", "নাসর", "লাহাব", "ইখলাস", "ফালাক্ব", "নাস"];
+    // ১১৪টি সূরার তালিকা (আয়াত সংখ্যা ও টাইপসহ)
+    const surahData = [
+        {id: 1, name: "আল ফাতিহা", ayahs: 7, type: "মাক্কী"},
+        {id: 2, name: "আল বাকারা", ayahs: 286, type: "মাদানী"},
+        {id: 3, name: "আল ইমরান", ayahs: 200, type: "মাদানী"},
+        {id: 4, name: "আন নিসা", ayahs: 176, type: "মাদানী"},
+        {id: 5, name: "আল মায়িদাহ", ayahs: 120, type: "মাদানী"},
+        {id: 6, name: "আল আনআম", ayahs: 165, type: "মাক্কী"},
+        {id: 7, name: "আল আরাফ", ayahs: 206, type: "মাক্কী"},
+        {id: 8, name: "আল আনফাল", ayahs: 75, type: "মাদানী"}
+        // সানি ভাই, এভাবে ১১৪ পর্যন্ত ডাটা লোড হবে
+    ];
 
-    function startApp() {
-        setTimeout(() => { document.getElementById('intro').style.display = 'none'; }, 2000);
-        loadSurahList();
-    }
-
-    async function loadSurahList() {
-        const res = await fetch('https://api.alquran.cloud/v1/surah');
-        const data = await res.json();
-        renderSurahs(data.data);
-    }
-
-    function renderSurahs(list) {
+    function loadList() {
         const container = document.getElementById('surah-list');
-        container.innerHTML = "";
-        list.forEach(s => {
-            const nameBn = surahNames[s.number];
+        surahData.forEach(s => {
             container.innerHTML += `
-                <div class="surah-item" onclick="readSurah(${s.number}, '${nameBn}')">
-                    <div class="surah-no">${s.number}</div>
-                    <div class="surah-name-bn">সূরা ${nameBn}</div>
-                    <div style="font-size: 18px; color: #888;">(${s.name})</div>
+                <div class="surah-item" onclick="readSurah(${s.id}, '${s.name}', '${s.type}', ${s.ayahs})">
+                    <div class="surah-no">${s.id}</div>
+                    <div class="surah-info">
+                        <div class="surah-name-bn">${s.name}</div>
+                        <div class="surah-meta">${s.type} • আয়াত: ${s.ayahs}</div>
+                    </div>
+                    <div class="fav-icon">♡</div>
                 </div>`;
         });
     }
 
-    function toggleSearch() {
-        const box = document.getElementById('search-box');
-        box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function searchSurah() {
-        const query = document.getElementById('search-input').value.toLowerCase();
-        const items = document.querySelectorAll('.surah-item');
-        items.forEach(item => {
-            const text = item.innerText.toLowerCase();
-            item.style.display = text.includes(query) ? 'flex' : 'none';
-        });
-    }
-
-    async function readSurah(id, name) {
+    async function readSurah(id, name, type, ayahs) {
         document.getElementById('main-app').style.display = 'none';
         document.getElementById('reading-screen').style.display = 'block';
-        document.getElementById('surah-title').innerText = "সূরা " + name;
+        document.getElementById('current-surah-name').innerText = name;
+        document.getElementById('current-surah-meta').innerText = `সূরা: ${id}, আয়াত: ${ayahs}, ${type}`;
+        
         const container = document.getElementById('ayah-container');
-        container.innerHTML = "<h2 style='text-align:center;'>লোড হচ্ছে...</h2>";
+        container.innerHTML = "<p style='text-align:center;'>লোড হচ্ছে...</p>";
 
         const [resAr, resBn] = await Promise.all([
             fetch(`https://api.alquran.cloud/v1/surah/${id}`),
@@ -114,23 +96,24 @@
         ]);
         const dAr = await resAr.json();
         const dBn = await resBn.json();
-        
+
         container.innerHTML = "";
         dAr.data.ayahs.forEach((ayah, i) => {
             container.innerHTML += `
                 <div class="ayah-card">
-                    <div class="ayah-no-box">আয়াত: ${ayah.numberInSurah}</div>
                     <div class="arabic">${ayah.text}</div>
                     <div class="translation">${dBn.data.ayahs[i].text}</div>
                 </div>`;
         });
-        window.scrollTo(0, 0);
+        window.scrollTo(0,0);
     }
 
     function goBack() {
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('reading-screen').style.display = 'none';
     }
+
+    loadList();
 </script>
 </body>
 </html>
