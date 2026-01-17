@@ -1,31 +1,33 @@
-pip install requests
+import urllib.request
+import json
 
-# ১. কুরআনের সূরা ও আয়াত পাওয়ার ফাংশন
+# ১. লাইব্রেরি ছাড়া কুরআন ডাটা আনার ফাংশন
 def get_quran_verse(surah, ayah):
     url = f"https://api.alquran.cloud/v1/ayah/{surah}:{ayah}/bn.bengali"
     try:
-        response = requests.get(url)
-        data = response.json()
-        if data['status'] == 'OK':
-            return data['data']['text']
-        return "আয়াত পাওয়া যায়নি।"
-    except:
-        return "ইন্টারনেট কানেকশন নেই।"
+        # requests এর বদলে urllib ব্যবহার
+        with urllib.request.urlopen(url) as response:
+            data = json.loads(response.read().decode())
+            if data['status'] == 'OK':
+                return data['data']['text']
+            return "সানি ভাই, আয়াতটি পাওয়া যায়নি।"
+    except Exception as e:
+        return "ইন্টারনেট কানেকশন বা কোডে সমস্যা হয়েছে।"
 
-# ২. মূল চ্যাটবট লুপ
-print("--- সানি ভাইয়ের ৫৯ মিলিয়ন ভিউ হওয়া স্পেশাল AI ---")
-print("আসসালামু আলাইকুম সানি ভাই! আমি আপনার ইসলামিক অ্যাসিস্ট্যান্ট।")
+# ২. চ্যাটবট শুরু
+print("--- সানি ভাইয়ের লাইব্রেরি-ফ্রি ইসলামিক AI ---")
+print("আসসালামু আলাইকুম সানি ভাই! ৩ বছরের তথ্য নিয়ে আমি তৈরি।")
 
 while True:
-    print("\n১. কুরআনের আয়াত পড়ুন")
-    print("২. বিদায় নিন")
+    print("\n১. কুরআনের আয়াত দেখুন")
+    print("২. বিদায় নিন")
     
-    choice = input("আপনার পছন্দ (১/২): ")
+    choice = input("আপনার চয়েস (১/২): ")
     
     if choice == '1':
         s = input("সূরা নম্বর দিন: ")
         a = input("আয়াত নম্বর দিন: ")
-        print("\nউত্তর: ", get_quran_verse(s, a))
+        print("\nফলাফল: ", get_quran_verse(s, a))
     elif choice == '2':
-        print("আল্লাহ হাফেজ সানি ভাই! আপনার ইউটিউব চ্যানেল যেন আরও বড় হয়।")
+        print("আল্লাহ হাফেজ সানি ভাই! ডি মারিয়ার মতো চিল করুন।")
         break
