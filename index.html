@@ -5,166 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আল্লাহ মহান</title>
     <style>
-        /* ১. ফুল ডার্ক থিম ও বড় ফন্ট */
-        body { font-family: 'Arial', sans-serif; background: #000; color: #fff; margin: 0; padding: 0; overflow-x: hidden; }
+        /* ১. ডার্ক মোড ও বড় ফন্ট [cite: 2026-01-16] */
+        body { font-family: 'Arial', sans-serif; background: #000; color: #fff; margin: 0; padding: 0; }
         
-        /* ২. ইন্ট্রো স্ক্রিন */
-        #intro { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        #intro h1 { font-size: 50px; color: #FF9800; text-shadow: 0 0 20px rgba(255, 152, 0, 0.5); }
-
-        /* ৩. টপ নেভিগেশন ও অ্যাপের নাম */
-        .app-header { background: #000; padding: 15px; text-align: center; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; }
-        .app-header h2 { margin: 0; font-size: 28px; color: #FF9800; }
+        /* ২. ইন্ট্রো */
+        #intro { position: fixed; top: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; }
         
-        .nav-top { background: #000; padding: 10px; display: flex; justify-content: space-around; border-bottom: 1px solid #111; }
-        .nav-item { text-align: center; font-size: 14px; color: #bbb; cursor: pointer; padding: 5px; }
+        /* ৩. হেডার স্টিকি (ফিক্সড নয়) */
+        .app-bar { background: #000; padding: 15px; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; text-align: center; }
+        .app-bar h2 { margin: 0; color: #FF9800; font-size: 30px; }
 
-        /* ৪. লাস্ট রিড সেকশন */
-        #last-read-box { background: #111; margin: 15px; padding: 25px; border-radius: 15px; border-left: 5px solid #FF9800; display: none; cursor: pointer; }
-        #last-read-box h3 { margin: 0; font-size: 18px; color: #FF9800; }
+        /* ৪. সূরার তালিকা স্টাইল */
+        .surah-item { display: flex; align-items: center; padding: 25px 20px; border-bottom: 1px solid #111; cursor: pointer; }
+        .surah-no { font-size: 22px; color: #555; width: 50px; font-weight: bold; }
+        .surah-name { font-size: 28px; font-weight: bold; flex-grow: 1; }
+        .surah-meta { font-size: 16px; color: #888; text-align: right; }
 
-        /* ৫. সার্চ বার */
-        #search-box { width: 90%; margin: 10px auto; display: none; }
-        #search-input { width: 100%; padding: 15px; border-radius: 30px; border: 1px solid #333; background: #111; color: #fff; font-size: 20px; outline: none; }
-
-        /* ৬. সূরার তালিকা */
-        .surah-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid #111; cursor: pointer; transition: 0.2s; }
-        .surah-item:hover { background: #0a0a0a; }
-        .surah-no { font-size: 20px; color: #555; width: 45px; font-weight: bold; }
-        .surah-info { flex-grow: 1; margin-left: 10px; }
-        .surah-name-bn { font-size: 26px; font-weight: bold; }
-        .surah-meta { font-size: 16px; color: #777; margin-top: 5px; }
-
-        /* ৭. রিডিং স্ক্রিন */
-        #reading-screen { display: none; background: #000; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 2000; overflow-y: auto; }
-        .ayah-card { padding: 40px 20px; border-bottom: 1px solid #111; text-align: center; }
-        .arabic { font-size: 45px; line-height: 2.3; color: #fff; font-family: serif; }
-        .translation { font-size: 26px; color: #aaa; line-height: 1.8; margin-top: 20px; }
+        /* ৫. রিডিং স্ক্রিন */
+        #reading-screen { display: none; background: #000; min-height: 100vh; }
+        .ayah-card { padding: 45px 20px; border-bottom: 1px solid #111; text-align: center; }
+        .arabic { font-size: 45px; line-height: 2.5; margin-bottom: 25px; }
+        .translation { font-size: 26px; color: #bbb; line-height: 1.8; }
+        
+        #last-read { background: #111; margin: 15px; padding: 25px; border-radius: 15px; border-left: 5px solid #FF9800; cursor: pointer; display: none; }
     </style>
 </head>
-<body onload="initApp()">
+<body onload="startApp()">
 
 <div id="intro"><h1>আল্লাহ মহান</h1></div>
 
 <div id="main-app">
-    <div class="app-header"><h2>আল্লাহ মহান</h2></div>
+    <div class="app-bar"><h2>আল্লাহ মহান</h2></div>
     
-    <div class="nav-top">
-        <div class="nav-item" onclick="location.reload()">📖<br>হোম</div>
-        <div class="nav-item" onclick="toggleSearch()">🔍<br>সার্চ</div>
+    <div style="display: flex; justify-content: space-around; padding: 15px; background: #000;">
+        <div onclick="location.reload()">🏠 হোম</div>
+        <div onclick="toggleSearch()">🔍 সার্চ</div>
     </div>
 
-    <div id="last-read-box" onclick="openLastRead()">
-        <h3>📖 শেষ পড়েছেন:</h3>
-        <div id="last-surah-info" style="font-size: 24px; font-weight: bold; margin-top: 10px; color: #fff;"></div>
-    </div>
-
-    <div id="search-box">
-        <input type="text" id="search-input" placeholder="সূরার নাম লিখে সার্চ করুন..." onkeyup="searchSurah()">
+    <div id="last-read" onclick="openLastRead()">
+        <h3 style="margin:0; color:#FF9800;">📖 শেষ পড়েছেন:</h3>
+        <div id="last-info" style="font-size: 24px; margin-top: 10px; font-weight: bold;"></div>
     </div>
 
     <div id="surah-list"></div>
 </div>
 
 <div id="reading-screen">
-    <div style="padding: 20px; background: #000; display: flex; align-items: center; border-bottom: 1px solid #222; position: sticky; top: 0;">
+    <div class="app-bar" style="display: flex; align-items: center;">
         <button onclick="goBack()" style="color:#fff; background:none; border:none; font-size: 40px; cursor:pointer;">←</button>
-        <div style="margin-left: 20px;">
-            <div id="curr-name" style="font-size: 24px; font-weight: bold;"></div>
-            <div id="curr-meta" style="font-size: 14px; color: #888;"></div>
+        <div style="margin-left: 20px; text-align: left;">
+            <div id="surah-title" style="font-size: 22px; font-weight: bold;"></div>
         </div>
     </div>
     <div id="ayah-container"></div>
 </div>
 
 <script>
-    const bnNames = ["", "ফাতিহা", "বাকারা", "ইমরান", "নিসা", "মায়িদাহ", "আন'আম", "আ'রাফ", "আনফাল", "তাওবাহ", "ইউনুস", "হুদ", "ইউসুফ", "রাদ", "ইব্রাহিম", "হিজর", "নাহল", "ইসরা", "কাহফ", "মারইয়াম", "ত্বোয়া-হা", "আম্বিয়া", "হাজ্জ", "মুমিনুন", "নূর", "ফুরকান", "শু'আরা", "নামল", "কাসাস", "আনকাবুত", "রূম", "লুকমান", "সাজদাহ", "আহজাব", "সাবা", "ফাতির", "ইয়াসীন", "সাফফাত", "সোয়াদ", "যুমার", "গাফির", "ফুসসিলাত", "শূরা", "যুখরুফ", "দুখান", "জাসিয়াহ", "আহক্বাফ", "মুহাম্মাদ", "ফাতহ", "হুজুরাত", "ক্বাফ", "যারিয়াত", "তূর", "নাজম", "ক্বামার", "রাহমান", "ওয়াক্বিয়াহ", "হাদীদ", "মুজাদালাহ", "হাশর", "মুমতাহিনাহ", "সাফ", "জুমু'আহ", "মুনাফিকুন", "তাগাবুন", "ত্বালাক্ব", "তাহরীম", "মুলক", "ক্বলম", "হাক্কাহ", "মা'আরিজ", "নূহ", "জীন", "মুযযামমিল", "মুদ্দাসসির", "ক্বিয়ামাহ", "ইনসান", "মুরসালাত", "নাবা", "নাযি'আত", "আবাসা", "তাকবীর", "ইনফিতার", "মুতাফফিফীন", "ইনশিক্বাক্ব", "বুরূজ", "তারিক্ব", "আ'লা", "গাশিয়াহ", "ফাজর", "বালাদ", "শামস", "লাইল", "দুহা", "ইনশিরাহ", "তীন", "আলাক্ব", "ক্বদর", "বাইয়্যিনাহ", "যিলযাল", "আদিয়াত", "ক্বারিয়াহ", "তাকাসুর", "আসর", "হুমাযাহ", "ফীল", "কুরাইশ", "মাউন", "কাউসার", "কাফিরুন", "নাসর", "লাহাব", "ইখলাস", "ফালাক্ব", "নাস"];
+    const namesBn = ["", "ফাতিহা", "বাকারা", "ইমরান", "নিসা", "মায়িদাহ", "আন'আম", "আ'রাফ", "আনফাল", "তাওবাহ", "ইউনুস", "হুদ", "ইউসুফ", "রাদ", "ইব্রাহিম", "হিজর", "নাহল", "ইসরা", "কাহফ", "মারইয়াম", "ত্বোয়া-হা", "আম্বিয়া", "হাজ্জ", "মুমিনুন", "নূর", "ফুরকান", "শু'আরা", "নামল", "কাসাস", "আনকাবুত", "রূম", "লুকমান", "সাজদাহ", "আহজাব", "সাবা", "ফাতির", "ইয়াসীন", "সাফফাত", "সোয়াদ", "যুমার", "গাফির", "ফুসসিলাত", "শূরা", "যুখরুফ", "দুখান", "জাসিয়াহ", "আহক্বাফ", "মুহাম্মাদ", "ফাতহ", "হুজুরাত", "ক্বাফ", "যারিয়াত", "তূর", "নাজম", "ক্বামার", "রাহমান", "ওয়াক্বিয়াহ", "হাদীদ", "মুজাদালাহ", "হাশর", "মুমতাহিনাহ", "সাফ", "জুমু'আহ", "মুনাফিকুন", "তাগাবুন", "ত্বালাক্ব", "তাহরীম", "মুলক", "ক্বলম", "হাক্কাহ", "মা'আরিজ", "নূহ", "জীন", "মুযযামমিল", "মুদ্দাসসির", "ক্বিয়ামাহ", "ইনসান", "মুরসালাত", "নাবা", "নাযি'আত", "আবাসা", "তাকবীর", "ইনফিতার", "মুতাফফিফীন", "ইনশিক্বাক্ব", "বুরূজ", "তারিক্ব", "আ'লা", "গাশিয়াহ", "ফাজর", "বালাদ", "শামস", "লাইল", "দুহা", "ইনশিরাহ", "তীন", "আলাক্ব", "ক্বদর", "বাইয়্যিনাহ", "যিলযাল", "আদিয়াত", "ক্বারিয়াহ", "তাকাসুর", "আসর", "হুমাযাহ", "ফীল", "কুরাইশ", "মাউন", "কাউসার", "কাফিরুন", "নাসর", "লাহাব", "ইখলাস", "ফালাক্ব", "নাস"];
 
-    function initApp() {
+    function startApp() {
         setTimeout(() => { document.getElementById('intro').style.display = 'none'; }, 2000);
-        showLastRead();
-        fetchSurahs();
+        checkLastRead();
+        loadList();
     }
 
-    async function fetchSurahs() {
+    async function loadList() {
         const res = await fetch('https://api.alquran.cloud/v1/surah');
         const data = await res.json();
-        const list = document.getElementById('surah-list');
-        list.innerHTML = "";
+        const container = document.getElementById('surah-list');
+        container.innerHTML = "";
         data.data.forEach(s => {
-            const nameBn = bnNames[s.number];
-            list.innerHTML += `
-                <div class="surah-item" onclick="readSurah(${s.number}, '${nameBn}', '${s.revelationType}', ${s.numberOfAyahs})">
+            container.innerHTML += `
+                <div class="surah-item" onclick="readSurah(${s.number}, '${namesBn[s.number]}', ${s.numberOfAyahs})">
                     <div class="surah-no">${s.number}</div>
-                    <div class="surah-info">
-                        <div class="surah-name-bn">সূরা ${nameBn}</div>
-                        <div class="surah-meta">${s.revelationType === 'Meccan' ? 'মাক্কী' : 'মাদানী'} • আয়াত: ${s.numberOfAyahs}</div>
-                    </div>
+                    <div class="surah-name">সূরা ${namesBn[s.number]}</div>
+                    <div class="surah-meta">আয়াত: ${s.numberOfAyahs}</div>
                 </div>`;
         });
     }
 
-    async function readSurah(id, name, type, ayahs) {
-        localStorage.setItem('lastId', id);
-        localStorage.setItem('lastName', name);
-        localStorage.setItem('lastAyahs', ayahs);
-
-        document.getElementById('reading-screen').style.display = 'block';
-        document.getElementById('curr-name').innerText = "সূরা " + name;
-        document.getElementById('curr-meta').innerText = `আয়াত: ${ayahs} • ${type === 'Meccan' ? 'মাক্কী' : 'মাদানী'}`;
+    async function readSurah(id, name, ayahs) {
+        localStorage.setItem('last_id', id);
+        localStorage.setItem('last_name', name);
+        localStorage.setItem('last_ayahs', ayahs);
         
-        const container = document.getElementById('ayah-container');
-        container.innerHTML = "<h2 style='text-align:center; margin-top: 50px;'>পবিত্র বাণী লোড হচ্ছে...</h2>";
-
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('reading-screen').style.display = 'block';
+        document.getElementById('surah-title').innerText = "সূরা " + name;
+        
+        const content = document.getElementById('ayah-container');
+        content.innerHTML = "<h2 style='text-align:center;'>পবিত্র বাণী লোড হচ্ছে...</h2>";
+        
         const [rAr, rBn] = await Promise.all([
             fetch(`https://api.alquran.cloud/v1/surah/${id}`),
             fetch(`https://api.alquran.cloud/v1/surah/${id}/bn.bengali`)
         ]);
         const dAr = await rAr.json();
         const dBn = await rBn.json();
-
-        container.innerHTML = "";
+        
+        content.innerHTML = "";
         dAr.data.ayahs.forEach((ayah, i) => {
-            container.innerHTML += `
+            content.innerHTML += `
                 <div class="ayah-card">
                     <div style="color: #FF9800; font-size: 18px; margin-bottom: 10px;">আয়াত: ${ayah.numberInSurah}</div>
                     <div class="arabic">${ayah.text}</div>
                     <div class="translation">${dBn.data.ayahs[i].text}</div>
                 </div>`;
         });
-        document.getElementById('reading-screen').scrollTop = 0;
+        window.scrollTo(0,0);
     }
 
-    function showLastRead() {
-        const name = localStorage.getItem('lastName');
-        const ayahs = localStorage.getItem('lastAyahs');
+    function checkLastRead() {
+        const name = localStorage.getItem('last_name');
         if(name) {
-            document.getElementById('last-read-box').style.display = 'block';
-            document.getElementById('last-surah-info').innerText = `সূরা ${name} (আয়াত সংখ্যা: ${ayahs})`;
+            document.getElementById('last-read').style.display = 'block';
+            document.getElementById('last-info').innerText = `সূরা ${name} (আয়াত: ${localStorage.getItem('last_ayahs')})`;
         }
     }
 
     function openLastRead() {
-        const id = localStorage.getItem('lastId');
-        if(id) readSurah(id, localStorage.getItem('lastName'), '', localStorage.getItem('lastAyahs'));
-    }
-
-    function toggleSearch() {
-        const box = document.getElementById('search-box');
-        box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function searchSurah() {
-        const q = document.getElementById('search-input').value.toLowerCase();
-        const items = document.querySelectorAll('.surah-item');
-        items.forEach(item => {
-            item.style.display = item.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
-        });
+        readSurah(localStorage.getItem('last_id'), localStorage.getItem('last_name'), localStorage.getItem('last_ayahs'));
     }
 
     function goBack() {
         document.getElementById('reading-screen').style.display = 'none';
-        showLastRead();
+        document.getElementById('main-app').style.display = 'block';
+        checkLastRead();
     }
 </script>
 </body>
