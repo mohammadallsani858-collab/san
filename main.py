@@ -1,4 +1,4 @@
-import requests
+pip install requests
 
 # ১. কুরআনের সূরা ও আয়াত পাওয়ার ফাংশন
 def get_quran_verse(surah, ayah):
